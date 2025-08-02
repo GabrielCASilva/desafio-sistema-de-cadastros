@@ -5,11 +5,21 @@ import { UserController } from './controllers/user.controller';
 import { PessoaController } from './controllers/pessoa.controller';
 import { PingV2Controller } from './controllers/ping-v2.controller';
 import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
 import { PessoaService } from './services/pessoa.service';
+import { USER_REPOSITORY } from './repositories/user-repository.interface';
 
 @Module({
   imports: [H2Module],
   controllers: [AppController, UserController, PessoaController, PingV2Controller],
-  providers: [UserService, PessoaService],
+  providers: [
+    UserService,
+    PessoaService,
+    UserRepository,
+    {
+      provide: USER_REPOSITORY,
+      useClass: UserRepository,
+    },
+  ],
 })
 export class AppModule {}

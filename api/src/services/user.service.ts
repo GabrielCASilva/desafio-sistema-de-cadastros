@@ -1,46 +1,42 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { H2Service } from '../h2/h2.service';
-import { mapDbUserToModel } from '../mappers/user.mapper';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+// import { H2Service } from '../h2/h2.service';
+import { UserMapper } from '../mappers/user.mapper';
+import { User } from '../entities/user.entity';
+import { IUserRepository, USER_REPOSITORY } from '../repositories/user-repository.interface';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly h2Service: H2Service) {}
+  constructor(
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
+  ) {}
 
-  async findAll() {
-    const users = await this.h2Service.query('SELECT * FROM usuarios');
-    return users.map(mapDbUserToModel);
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.findAll();
+    return users.map(UserMapper.fromDb);
   }
 
-  async findOne(id: number) {
-    const result = await this.h2Service.query('SELECT * FROM usuarios WHERE id = ?', [id]);
-    if (!result || result.length === 0) {
+  async findOne(id: number): Promise<User> {
+    const dbUser = await this.userRepository.findById(id);
+    if (!dbUser) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
-    return mapDbUserToModel(result[0]);
+    return UserMapper.fromDb(dbUser);
   }
 
   async create(data: any) {
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-    const fields = keys.map(k => k).join(', ');
-    const params = keys.map(() => '?').join(', ');
-    const sql = `INSERT INTO usuarios (${fields}) VALUES (${params})`;
-    await this.h2Service.query(sql, values);
-    const result = await this.h2Service.query('SELECT * FROM usuarios ORDER BY id DESC LIMIT 1');
-    return result[0];
+    await this.userRepository.insert(data);
+    const last = await this.userRepository.findLastInserted();
+    return last ? UserMapper.fromDb(last) : null;
   }
 
   async update(id: number, data: any) {
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-    const setClause = keys.map(k => `${k} = ?`).join(', ');
-    const sql = `UPDATE usuarios SET ${setClause} WHERE id = ?`;
-    await this.h2Service.query(sql, [...values, id]);
+    await this.userRepository.update(id, data);
     return this.findOne(id);
   }
 
   async remove(id: number) {
-    await this.h2Service.query('DELETE FROM usuarios WHERE id = ?', [id]);
+    await this.userRepository.remove(id);
     return { deleted: true };
   }
 }
