@@ -55,9 +55,7 @@ export class H2Service implements OnModuleInit {
     java.options.push('-Djava.awt.headless=true');
     java.options.push('--add-opens=java.base/java.lang=ALL-UNNAMED');
     java.options.push('--add-opens=java.base/java.util=ALL-UNNAMED');
-  // Removed duplicate execute method
-    }
-  
+  }
 
   private async createConnection() {
     return new Promise<any>((resolve, reject) => {

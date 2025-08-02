@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class UserCreateDto {
   @ApiProperty({ example: 1, description: 'ID da pessoa associada ao usuário' })
   pessoa_id: number;
 

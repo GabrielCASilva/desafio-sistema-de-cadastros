@@ -1,14 +1,14 @@
 
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, VERSION_NEUTRAL, Version } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 
 import { UserService } from '../services/user.service';
 import { UserResponseDto } from 'src/dtos/user/response.dto';
-import { CreateUserDto } from 'src/dtos/user/create.dto';
-import { UpdateUserDto } from 'src/dtos/user/update.dto';
+import { UserCreateDto } from 'src/dtos/user/create.dto';
+import { UserUpdateDto } from 'src/dtos/user/update.dto';
 
 @ApiTags('Usuários')
-@Controller('api/v1/usuarios')
+@Controller('usuarios')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -16,21 +16,21 @@ export class UserController {
   async findAll(): Promise<UserResponseDto[]> {
     return this.userService.findAll();
   }
-
+  
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<UserResponseDto> {
     return this.userService.findOne(id);
   }
 
   @Post()
-  @ApiBody({ type: CreateUserDto })
-  async create(@Body() data: CreateUserDto): Promise<UserResponseDto | null> {
+  @ApiBody({ type: UserCreateDto })
+  async create(@Body() data: UserCreateDto): Promise<UserResponseDto | null> {
     return this.userService.create(data);
   }
 
   @Put(':id')
-  @ApiBody({ type: UpdateUserDto })
-  async update(@Param('id') id: number, @Body() data: UpdateUserDto): Promise<UserResponseDto> {
+  @ApiBody({ type: UserUpdateDto })
+  async update(@Param('id') id: number, @Body() data: UserUpdateDto): Promise<UserResponseDto> {
     return this.userService.update(id, data);
   }
 

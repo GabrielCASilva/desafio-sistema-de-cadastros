@@ -2,7 +2,7 @@ import { Inject, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PersonMapper } from '../mappers/person.mapper';
 import { IPersonRepository, PERSON_REPOSITORY } from '../repositories/person-repository.interface';
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
-import { CreatePessoaDto } from 'src/dtos/person/create.dto';
+import { PersonCreateDto } from 'src/dtos/person/create.dto';
 
 @Injectable()
 export class PessoaService {
@@ -24,13 +24,13 @@ export class PessoaService {
     return PersonMapper.toResponseDto(PersonMapper.fromDb(pessoa));
   }
 
-  async create(data: CreatePessoaDto): Promise<PersonResponseDto> {
+  async create(data: PersonCreateDto): Promise<PersonResponseDto> {
     await this.personRepository.insert(data);
     const last = await this.personRepository.findLastInserted();
     return last ? PersonMapper.toResponseDto(PersonMapper.fromDb(last)) : null;
   }
 
-  async update(id: number, data: Partial<CreatePessoaDto>): Promise<PersonResponseDto> {
+  async update(id: number, data: Partial<PersonCreateDto>): Promise<PersonResponseDto> {
     await this.personRepository.update(id, data);
     return this.findOne(id);
   }

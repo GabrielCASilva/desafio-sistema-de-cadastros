@@ -1,12 +1,12 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Version, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { PessoaService } from '../services/person.service';
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
-import { CreatePessoaDto } from 'src/dtos/person/create.dto';
-import { UpdatePessoaDto } from 'src/dtos/person/update.dto';
+import { PersonCreateDto } from 'src/dtos/person/create.dto';
+import { PersonUpdateDto } from 'src/dtos/person/update.dto';
 
 @ApiTags('Pessoas')
-@Controller('api/v1/pessoas')
+@Controller('pessoas')
 export class PessoaController {
   constructor(private readonly pessoaService: PessoaService) {}
 
@@ -21,13 +21,20 @@ export class PessoaController {
   }
 
   @Post()
-  async create(@Body() data: CreatePessoaDto): Promise<PersonResponseDto> {
+    @Version('1')
+  async create(@Body() data: PersonCreateDto): Promise<PersonResponseDto> {
+    return this.pessoaService.create(data);
+  }
+
+    @Post()
+    @Version('2')
+  async createV2(@Body() data: PersonCreateDto): Promise<PersonResponseDto> {
     return this.pessoaService.create(data);
   }
 
   @Put(':id')
-  @ApiBody({ type: UpdatePessoaDto })
-  async update(@Param('id') id: number, @Body() data: UpdatePessoaDto): Promise<PersonResponseDto> {
+  @ApiBody({ type: PersonUpdateDto })
+  async update(@Param('id') id: number, @Body() data: PersonUpdateDto): Promise<PersonResponseDto> {
     return this.pessoaService.update(id, data);
   }
 

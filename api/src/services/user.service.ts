@@ -3,7 +3,7 @@ import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { UserMapper } from '../mappers/user.mapper';
 import { IUserRepository, USER_REPOSITORY } from '../repositories/user-repository.interface';
 import { UserResponseDto } from 'src/dtos/user/response.dto';
-import { CreateUserDto } from 'src/dtos/user/create.dto';
+import { UserCreateDto } from 'src/dtos/user/create.dto';
 
 @Injectable()
 export class UserService {
@@ -25,13 +25,13 @@ export class UserService {
     return UserMapper.toResponseDto(UserMapper.fromDb(dbUser));
   }
 
-  async create(data: CreateUserDto): Promise<UserResponseDto | null> {
+  async create(data: UserCreateDto): Promise<UserResponseDto | null> {
     await this.userRepository.insert(data);
     const last = await this.userRepository.findLastInserted();
     return last ? UserMapper.toResponseDto(UserMapper.fromDb(last)) : null;
   }
 
-  async update(id: number, data: Partial<CreateUserDto>): Promise<UserResponseDto> {
+  async update(id: number, data: Partial<UserCreateDto>): Promise<UserResponseDto> {
     await this.userRepository.update(id, data);
     return this.findOne(id);
   }

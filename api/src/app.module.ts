@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { AppController } from './controllers/app.controller';
 import { H2Module } from './h2/h2.module';
 import { UserController } from './controllers/user.controller';
 import { PessoaController } from './controllers/pessoa.controller';
-import { PingV2Controller } from './controllers/ping-v2.controller';
 import { UserService } from './services/user.service';
 import { UserRepository } from './repositories/user.repository';
 import { PessoaService } from './services/person.service';
@@ -13,7 +12,7 @@ import { PERSON_REPOSITORY } from './repositories/person-repository.interface';
 
 @Module({
   imports: [H2Module],
-  controllers: [AppController, UserController, PessoaController, PingV2Controller],
+  controllers: [AppController, UserController, PessoaController],
   providers: [
     UserService,
     PessoaService,
