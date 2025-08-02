@@ -1,5 +1,18 @@
-import { IsString, IsOptional, IsDateString, Length, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+  Length,
+  IsNotEmpty,
+  IsEmail,
+  Matches,
+  Validate,
+  IsIn,
+} from 'class-validator';
+
+import { IsPastDateConstraint } from 'src/common/validators/is-past-date.validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { SEXO_ENUM } from 'src/entities/user.entity';
 
 export class PersonCreateDto {
   @ApiProperty({ example: 'Ana Silva' })
@@ -7,19 +20,23 @@ export class PersonCreateDto {
   @IsNotEmpty()
   nome: string;
 
-  @ApiProperty({ example: 'FEMININO', required: false })
+  @ApiProperty({ example: 'FEMININO', required: false, enum: SEXO_ENUM })
   @IsString()
   @IsOptional()
+  @IsIn(SEXO_ENUM, {
+    message: 'O sexo deve ser MASCULINO, FEMININO ou OUTRO',
+  })
   sexo?: string;
 
   @ApiProperty({ example: 'ana@email.com', required: false })
-  @IsString()
+  @IsEmail()
   @IsOptional()
   email?: string;
 
   @ApiProperty({ example: '1990-01-15' })
   @IsDateString()
   @IsNotEmpty()
+  @Validate(IsPastDateConstraint)
   data_nascimento: string;
 
   @ApiProperty({ example: 'São Paulo', required: false })
@@ -41,6 +58,7 @@ export class PersonCreateDto {
   @IsString()
   @Length(11, 14)
   @IsNotEmpty()
+  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: 'O CPF deve estar no formato 000.000.000-00' })
   cpf: string;
 
   @ApiProperty({ example: '1133334444', required: false })
