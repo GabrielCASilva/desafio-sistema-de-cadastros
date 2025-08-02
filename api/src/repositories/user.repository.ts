@@ -8,35 +8,40 @@ import { User } from '../entities/user.entity';
 export class UserRepository implements IUserRepository, IRepository<User> {
   constructor(private readonly h2Service: H2Service) {}
 
-
   async findAll(): Promise<User[]> {
-    return this.h2Service.query('SELECT * FROM usuarios');
+    return this.h2Service.query(
+      'SELECT id, pessoa_id, login, senha, ativo, last_login_at, created_at, updated_at FROM usuarios',
+    );
   }
 
   async findById(id: number): Promise<User | null> {
-    const result = await this.h2Service.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+    const result = await this.h2Service.query(
+      'SELECT id, pessoa_id, login, senha, ativo, last_login_at, created_at, updated_at FROM usuarios WHERE id = ?',
+      [id],
+    );
     return result[0] || null;
   }
-
 
   async insert(data: Partial<User>): Promise<void> {
     const keys = Object.keys(data);
     const values = Object.values(data);
-    const fields = keys.map(k => k).join(', ');
+    const fields = keys.map((k) => k).join(', ');
     const params = keys.map(() => '?').join(', ');
     const sql = `INSERT INTO usuarios (${fields}) VALUES (${params})`;
     await this.h2Service.execute(sql, values);
   }
 
-  async findLastInserted(): Promise<User | null> {
-    const result = await this.h2Service.query('SELECT * FROM usuarios ORDER BY id DESC LIMIT 1');
+  async findLastUser(): Promise<User | null> {
+    const result = await this.h2Service.query(
+      'SELECT id, pessoa_id, login, senha, ativo, last_login_at, created_at, updated_at FROM usuarios ORDER BY id DESC LIMIT 1',
+    );
     return result[0] || null;
   }
 
   async update(id: number, data: Partial<User>): Promise<void> {
     const keys = Object.keys(data);
     const values = Object.values(data);
-    const setClause = keys.map(k => `${k} = ?`).join(', ');
+    const setClause = keys.map((k) => `${k} = ?`).join(', ');
     const sql = `UPDATE usuarios SET ${setClause} WHERE id = ?`;
     await this.h2Service.execute(sql, [...values, id]);
   }

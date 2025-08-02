@@ -29,8 +29,8 @@ export class PersonMapper {
       cpf: db.CPF,
       telefone: db.TELEFONE,
       celular: db.CELULAR,
-      created_at: db.CREATED_AT,
-      updated_at: db.UPDATED_AT,
+      created_at: PersonMapper.toIsoStringOrNull(db.CREATED_AT),
+      updated_at: PersonMapper.toIsoStringOrNull(db.UPDATED_AT),
     };
   }
 

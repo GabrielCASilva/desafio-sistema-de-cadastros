@@ -8,16 +8,18 @@ async function bootstrap() {
   const java = require('java');
   java.options.push('-Djava.awt.headless=true');
   java.options.push('--add-opens=java.base/java.lang=ALL-UNNAMED');
-  
-  const app = await NestFactory.create(AppModule);
 
-  // Habilita versionamento por URI: /v1, /v2
+  const app = await NestFactory.create(AppModule);
+  const { AppExceptionFilter } = await import('./common/filters/app-exception.filter');
+  app.useGlobalFilters(new AppExceptionFilter());
+
+  // versionamento por URI
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1', // opcional, assume v1 se não passar nada
+    defaultVersion: '1',
   });
 
-  // Swagger config único (exibe v1 e v2 juntos)
+  // Swagger config único
   const config = new DocumentBuilder()
     .setTitle('Desafio Controle de Cadastros API')
     .setDescription('Documentação da API com múltiplas versões')

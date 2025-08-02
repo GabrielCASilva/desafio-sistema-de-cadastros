@@ -1,4 +1,4 @@
-  // Removido método execute duplicado
+// Removido método execute duplicado
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import * as java from 'java';
 import * as fs from 'fs';
@@ -6,6 +6,8 @@ import { join } from 'path';
 
 @Injectable()
 export class H2Service implements OnModuleInit {
+  public static H2_UNIQUE_CONSTRAIN: string = '23505';
+
   private readonly logger = new Logger(H2Service.name);
   private readonly DB_PATH = join(process.cwd(), 'database', 'h2db');
   private isReady = false;
@@ -34,14 +36,13 @@ export class H2Service implements OnModuleInit {
     }
   }
 
-
   async onModuleInit() {
     try {
       this.configureJavaEnvironment();
       await this.setupH2Driver();
-    
+
       await this.initializeDatabase();
-      
+
       this.isReady = true;
       this.logger.log('H2 Service initialized successfully');
     } catch (error) {
@@ -60,8 +61,7 @@ export class H2Service implements OnModuleInit {
   private async createConnection() {
     return new Promise<any>((resolve, reject) => {
       const url = `jdbc:h2:file:${this.DB_PATH};DB_CLOSE_DELAY=-1`;
-      
-      
+
       java.callStaticMethod(
         'java.sql.DriverManager',
         'getConnection',
@@ -75,54 +75,55 @@ export class H2Service implements OnModuleInit {
           } else {
             resolve(conn);
           }
-        }
+        },
       );
     });
   }
 
   private async createEssentialTables(conn: any) {
-      const schemaPath = join(process.cwd(), 'src', 'h2', 'schema.sql');
-      
-      let createTablesSQL = '';
-      try {
-        createTablesSQL = fs.readFileSync(schemaPath, 'utf-8');
-        this.logger.debug(`Schema SQL carregado de: ${schemaPath}`);
-      } catch (err) {
-        this.logger.error('Erro ao ler schema.sql', err);
-        throw err;
-      }
+    const schemaPath = join(process.cwd(), 'src', 'h2', 'schema.sql');
 
-      try {
-        await new Promise<void>((resolve, reject) => {
-          conn.createStatement((err, stmt) => {
-            if (err) return reject(err);
+    let createTablesSQL = '';
+    try {
+      createTablesSQL = fs.readFileSync(schemaPath, 'utf-8');
+      this.logger.debug(`Schema SQL carregado de: ${schemaPath}`);
+    } catch (err) {
+      this.logger.error('Erro ao ler schema.sql', err);
+      throw err;
+    }
 
-            const statements = createTablesSQL.split(';')
-              .map(s => s.trim())
-              .filter(s => s.length > 0);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        conn.createStatement((err, stmt) => {
+          if (err) return reject(err);
 
-            const executeNext = (index: number) => {
-              if (index >= statements.length) {
+          const statements = createTablesSQL
+            .split(';')
+            .map((s) => s.trim())
+            .filter((s) => s.length > 0);
+
+          const executeNext = (index: number) => {
+            if (index >= statements.length) {
+              stmt.close();
+              return resolve();
+            }
+
+            stmt.executeUpdate(statements[index] + ';', (err: any) => {
+              if (err) {
                 stmt.close();
-                return resolve();
+                return reject(err);
               }
+              executeNext(index + 1);
+            });
+          };
 
-              stmt.executeUpdate(statements[index] + ';', (err: any) => {
-                if (err) {
-                  stmt.close();
-                  return reject(err);
-                }
-                executeNext(index + 1);
-              });
-            };
-
-            executeNext(0);
-          });
+          executeNext(0);
         });
-      } catch (err) {
-        this.logger.error('Erro ao executar statements SQL', err);
-        throw err;
-      }
+      });
+    } catch (err) {
+      this.logger.error('Erro ao executar statements SQL', err);
+      throw err;
+    }
   }
 
   private async closeConnection(conn: any) {
@@ -224,8 +225,6 @@ export class H2Service implements OnModuleInit {
       await this.closeConnection(conn);
     }
   }
-
-
 
   private async createStatement(conn: any, sql: string, params: any[]) {
     this.logger.debug(`Creating statement for query: ${sql}`);

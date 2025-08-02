@@ -22,6 +22,9 @@ export class PersonResponseDto {
   @ApiProperty({ example: 'Brasileiro', required: false })
   nacionalidade?: string;
 
+  @ApiProperty({ example: 'Rua das Flores, 123', required: false })
+  endereco?: string;
+
   @ApiProperty({ example: '123.456.789-00' })
   cpf: string;
 

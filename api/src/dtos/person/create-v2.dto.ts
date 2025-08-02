@@ -1,7 +1,7 @@
-import { IsString, IsOptional, IsDateString, Length, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsDateString, Length, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PersonCreateDto {
+export class PersonCreateV2Dto {
   @ApiProperty({ example: 'Ana Silva' })
   @IsString()
   @IsNotEmpty()
@@ -32,10 +32,10 @@ export class PersonCreateDto {
   @IsOptional()
   nacionalidade?: string;
 
-  @ApiProperty({ example: 'Rua das Flores, 123', required: false })
+  @ApiProperty({ example: 'Rua das Flores, 123' })
   @IsString()
-  @IsOptional()
-  endereco?: string;
+  @IsNotEmpty()
+  endereco: string;
 
   @ApiProperty({ example: '123.456.789-00' })
   @IsString()

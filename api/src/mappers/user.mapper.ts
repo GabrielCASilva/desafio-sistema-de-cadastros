@@ -29,6 +29,18 @@ export class UserMapper {
     };
   }
 
+  static toResponseDtoWithPerson(user: User, person: any): any {
+    return {
+      id: user.id,
+      pessoa: person,
+      login: user.login,
+      ativo: user.ativo,
+      last_login_at: user.last_login_at,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
+  }
+
   static toResponseDto(user: User): UserResponseDto {
     return {
       id: user.id,
@@ -40,4 +52,7 @@ export class UserMapper {
       updated_at: user.updated_at,
     };
   }
+
+  // ...existing code...
+  // ...existing code...
 }

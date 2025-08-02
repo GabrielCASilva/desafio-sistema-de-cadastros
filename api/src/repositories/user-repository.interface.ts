@@ -3,6 +3,6 @@ import { User } from '../entities/user.entity';
 
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');
 export interface IUserRepository extends IRepository<User> {
-  findLastInserted(): Promise<User | null>;
+  findLastUser(): Promise<User | null>;
 }
 

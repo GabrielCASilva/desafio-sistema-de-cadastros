@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS pessoas (
   data_nascimento DATE NOT NULL,
   naturalidade VARCHAR(100),
   nacionalidade VARCHAR(100),
+  endereco VARCHAR(255),
   cpf VARCHAR(14) NOT NULL UNIQUE,
   telefone VARCHAR(20),
   celular VARCHAR(20),
@@ -44,35 +45,35 @@ VALUES ('database_version', '1.0.0');
 
 
 -- Inserção de dados de exemplo para pessoas (só insere se não existir o e-mail)
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Ana Silva', 'FEMININO', 'ana.silva@email.com', '1990-01-15', 'São Paulo', 'Brasileira', '123.456.789-00', '1133334444', '1199998888'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Ana Silva', 'FEMININO', 'ana.silva@email.com', '1990-01-15', 'São Paulo', 'Brasileira', 'Rua das Flores, 123', '123.456.789-00', '1133334444', '1199998888'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'ana.silva@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Bruno Souza', 'MASCULINO', 'bruno.souza@email.com', '1985-05-20', 'Rio de Janeiro', 'Brasileira', '234.567.890-11', '2122223333', '2198887777'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Bruno Souza', 'MASCULINO', 'bruno.souza@email.com', '1985-05-20', 'Rio de Janeiro', 'Brasileira', NULL, '234.567.890-11', '2122223333', '2198887777'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'bruno.souza@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Carla Dias', 'FEMININO', 'carla.dias@email.com', '1992-03-10', 'Belo Horizonte', 'Brasileira', '345.678.901-22', '3133332222', '3199991111'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Carla Dias', 'FEMININO', 'carla.dias@email.com', '1992-03-10', 'Belo Horizonte', 'Brasileira', 'Av. Central, 456', '345.678.901-22', '3133332222', '3199991111'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'carla.dias@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Diego Lima', 'MASCULINO', 'diego.lima@email.com', '1988-07-25', 'Curitiba', 'Brasileira', '456.789.012-33', '4133331111', '4198882222'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Diego Lima', 'MASCULINO', 'diego.lima@email.com', '1988-07-25', 'Curitiba', 'Brasileira', NULL, '456.789.012-33', '4133331111', '4198882222'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'diego.lima@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Eduarda Pires', 'FEMININO', 'eduarda.pires@email.com', '1995-11-30', 'Porto Alegre', 'Brasileira', '567.890.123-44', '5133330000', '5199993333'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Eduarda Pires', 'FEMININO', 'eduarda.pires@email.com', '1995-11-30', 'Porto Alegre', 'Brasileira', 'Rua do Sol, 789', '567.890.123-44', '5133330000', '5199993333'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'eduarda.pires@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Felipe Costa', 'MASCULINO', 'felipe.costa@email.com', '1983-09-12', 'Salvador', 'Brasileira', '678.901.234-55', '7133334444', '7198885555'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Felipe Costa', 'MASCULINO', 'felipe.costa@email.com', '1983-09-12', 'Salvador', 'Brasileira', NULL, '678.901.234-55', '7133334444', '7198885555'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'felipe.costa@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Gabriela Rocha', 'FEMININO', 'gabriela.rocha@email.com', '1991-12-05', 'Fortaleza', 'Brasileira', '789.012.345-66', '8533336666', '8599997777'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Gabriela Rocha', 'FEMININO', 'gabriela.rocha@email.com', '1991-12-05', 'Fortaleza', 'Brasileira', NULL, '789.012.345-66', '8533336666', '8599997777'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'gabriela.rocha@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Henrique Alves', 'MASCULINO', 'henrique.alves@email.com', '1987-04-18', 'Recife', 'Brasileira', '890.123.456-77', '8133338888', '8199999999'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Henrique Alves', 'MASCULINO', 'henrique.alves@email.com', '1987-04-18', 'Recife', 'Brasileira', NULL, '890.123.456-77', '8133338888', '8199999999'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'henrique.alves@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'Isabela Martins', 'FEMININO', 'isabela.martins@email.com', '1993-06-22', 'Manaus', 'Brasileira', '901.234.567-88', '9233330000', '9298881111'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'Isabela Martins', 'FEMININO', 'isabela.martins@email.com', '1993-06-22', 'Manaus', 'Brasileira', NULL, '901.234.567-88', '9233330000', '9298881111'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'isabela.martins@email.com');
-INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, cpf, telefone, celular)
-SELECT 'João Pedro', 'MASCULINO', 'joao.pedro@email.com', '1989-08-14', 'Brasília', 'Brasileira', '012.345.678-99', '6133332222', '6199993333'
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular)
+SELECT 'João Pedro', 'MASCULINO', 'joao.pedro@email.com', '1989-08-14', 'Brasília', 'Brasileira', NULL, '012.345.678-99', '6133332222', '6199993333'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'joao.pedro@email.com');
 
 

@@ -1,5 +1,4 @@
-
-import { Controller, Get, Post, Body, Param, Put, Delete, VERSION_NEUTRAL, Version } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 
 import { UserService } from '../services/user.service';
@@ -14,12 +13,12 @@ export class UserController {
 
   @Get()
   async findAll(): Promise<UserResponseDto[]> {
-    return this.userService.findAll();
+    return this.userService.findAll(true);
   }
-  
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<UserResponseDto> {
-    return this.userService.findOne(id);
+    return this.userService.findOne(id, true);
   }
 
   @Post()

@@ -8,12 +8,18 @@ export class PersonRepository implements IPersonRepository {
   constructor(private readonly h2Service: H2Service) {}
 
   async findAll(): Promise<Pessoa[]> {
-    const result = await this.h2Service.query('SELECT * FROM pessoas');
+    const result = await this.h2Service.query(
+      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM pessoas`,
+    );
     return result;
   }
 
   async findById(id: number): Promise<Pessoa | null> {
-    const result = await this.h2Service.query('SELECT * FROM pessoas WHERE id = ?', [id]);
+    const result = await this.h2Service.query(
+      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM pessoas WHERE id = ?
+            `,
+      [id],
+    );
     if (!result || result.length === 0) return null;
     return result[0];
   }
@@ -21,7 +27,7 @@ export class PersonRepository implements IPersonRepository {
   async insert(data: any): Promise<void> {
     const keys = Object.keys(data);
     const values = Object.values(data);
-    const fields = keys.map(k => k).join(', ');
+    const fields = keys.map((k) => k).join(', ');
     const params = keys.map(() => '?').join(', ');
     const sql = `INSERT INTO pessoas (${fields}) VALUES (${params})`;
     await this.h2Service.execute(sql, values);
@@ -30,7 +36,7 @@ export class PersonRepository implements IPersonRepository {
   async update(id: number, data: any): Promise<void> {
     const keys = Object.keys(data);
     const values = Object.values(data);
-    const setClause = keys.map(k => `${k} = ?`).join(', ');
+    const setClause = keys.map((k) => `${k} = ?`).join(', ');
     const sql = `UPDATE pessoas SET ${setClause} WHERE id = ?`;
     await this.h2Service.execute(sql, [...values, id]);
   }
@@ -39,8 +45,26 @@ export class PersonRepository implements IPersonRepository {
     await this.h2Service.execute('DELETE FROM pessoas WHERE id = ?', [id]);
   }
 
-  async findLastInserted(): Promise<Pessoa | null> {
-    const result = await this.h2Service.query('SELECT * FROM pessoas ORDER BY id DESC LIMIT 1');
+  async findLastPerson(): Promise<Pessoa | null> {
+    const result = await this.h2Service.query(
+      `SELECT 
+        id, 
+        nome, 
+        sexo, 
+        email, 
+        data_nascimento, 
+        naturalidade, 
+        nacionalidade, 
+        endereco, 
+        cpf, 
+        telefone, 
+        celular, 
+        created_at, 
+        updated_at 
+            FROM pessoas 
+        ORDER BY id 
+        DESC LIMIT 1`,
+    );
     if (!result || result.length === 0) return null;
     return result[0];
   }

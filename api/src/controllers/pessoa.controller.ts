@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Version, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Version } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { PessoaService } from '../services/person.service';
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
 import { PersonCreateDto } from 'src/dtos/person/create.dto';
+import { PersonCreateV2Dto } from 'src/dtos/person/create-v2.dto';
 import { PersonUpdateDto } from 'src/dtos/person/update.dto';
 
 @ApiTags('Pessoas')
@@ -21,14 +22,14 @@ export class PessoaController {
   }
 
   @Post()
-    @Version('1')
+  @Version('1')
   async create(@Body() data: PersonCreateDto): Promise<PersonResponseDto> {
     return this.pessoaService.create(data);
   }
 
-    @Post()
-    @Version('2')
-  async createV2(@Body() data: PersonCreateDto): Promise<PersonResponseDto> {
+  @Post()
+  @Version('2')
+  async createV2(@Body() data: PersonCreateV2Dto): Promise<PersonResponseDto> {
     return this.pessoaService.create(data);
   }
 
