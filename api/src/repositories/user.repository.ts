@@ -25,7 +25,7 @@ export class UserRepository implements IUserRepository, IRepository<User> {
     const fields = keys.map(k => k).join(', ');
     const params = keys.map(() => '?').join(', ');
     const sql = `INSERT INTO usuarios (${fields}) VALUES (${params})`;
-    await this.h2Service.query(sql, values);
+    await this.h2Service.execute(sql, values);
   }
 
   async findLastInserted(): Promise<User | null> {
@@ -38,10 +38,10 @@ export class UserRepository implements IUserRepository, IRepository<User> {
     const values = Object.values(data);
     const setClause = keys.map(k => `${k} = ?`).join(', ');
     const sql = `UPDATE usuarios SET ${setClause} WHERE id = ?`;
-    await this.h2Service.query(sql, [...values, id]);
+    await this.h2Service.execute(sql, [...values, id]);
   }
 
   async remove(id: number): Promise<void> {
-    await this.h2Service.query('DELETE FROM usuarios WHERE id = ?', [id]);
+    await this.h2Service.execute('DELETE FROM usuarios WHERE id = ?', [id]);
   }
 }

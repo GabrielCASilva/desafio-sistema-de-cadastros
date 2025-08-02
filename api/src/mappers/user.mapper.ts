@@ -1,5 +1,5 @@
+import { UserResponseDto } from 'src/dtos/user/response.dto';
 import { User } from '../entities/user.entity';
-import { UserResponseDto } from '../dtos/user-response.dto';
 
 export class UserMapper {
   static toIsoStringOrNull(val: any): string | null {

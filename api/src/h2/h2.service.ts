@@ -1,3 +1,4 @@
+  // Removido método execute duplicado
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import * as java from 'java';
 import * as fs from 'fs';
@@ -8,6 +9,30 @@ export class H2Service implements OnModuleInit {
   private readonly logger = new Logger(H2Service.name);
   private readonly DB_PATH = join(process.cwd(), 'database', 'h2db');
   private isReady = false;
+
+  private async setupH2Driver() {
+    return new Promise<void>((resolve, reject) => {
+      // Caminho do JAR do H2
+      const h2JarPath = join(process.cwd(), 'libs', 'h2-2.2.224.jar');
+      if (!fs.existsSync(h2JarPath)) {
+        this.logger.error(`Arquivo JAR do H2 não encontrado em: ${h2JarPath}`);
+        return reject(new Error('Arquivo JAR do H2 não encontrado.'));
+      }
+      java.classpath.push(h2JarPath);
+      java.import('org.h2.Driver');
+      this.logger.log('H2 Driver carregado com sucesso');
+      resolve();
+    });
+  }
+
+  private async initializeDatabase() {
+    const conn = await this.createConnection();
+    try {
+      await this.createEssentialTables(conn);
+    } finally {
+      await this.closeConnection(conn);
+    }
+  }
 
 
   async onModuleInit() {
@@ -30,35 +55,9 @@ export class H2Service implements OnModuleInit {
     java.options.push('-Djava.awt.headless=true');
     java.options.push('--add-opens=java.base/java.lang=ALL-UNNAMED');
     java.options.push('--add-opens=java.base/java.util=ALL-UNNAMED');
-    this.logger.debug('Java VM options configured');
-  }
-
-  private async setupH2Driver() {
-    const h2JarPath = join(process.cwd(), 'libs', 'h2-2.2.224.jar');
-    
-    if (!fs.existsSync(h2JarPath)) {
-      throw new Error(`H2 JDBC driver not found at: ${h2JarPath}`);
+  // Removed duplicate execute method
     }
-
-    java.classpath.push(h2JarPath);
-    this.logger.debug(`H2 driver added to classpath: ${h2JarPath}`);
-  }
-
-  private async initializeDatabase() {
-    const dbDir = join(process.cwd(), 'database');
-    if (!fs.existsSync(dbDir)) {
-      fs.mkdirSync(dbDir);
-      this.logger.debug(`Created database directory at: ${dbDir}`);
-    }
-
-    const conn = await this.createConnection();
-    try {
-      await this.createEssentialTables(conn);
-      this.logger.log('Database tables verified/created');
-    } finally {
-      await this.closeConnection(conn);
-    }
-  }
+  
 
   private async createConnection() {
     return new Promise<any>((resolve, reject) => {
@@ -185,6 +184,50 @@ export class H2Service implements OnModuleInit {
       await this.closeConnection(conn);
     }
   }
+
+  async execute(sql: string, params: any[] = []): Promise<void> {
+    if (!this.isReady) {
+      this.logger.error('H2 Service is not ready');
+      throw new Error('H2 Service is not ready');
+    }
+
+    this.logger.debug(`Executing statement: ${sql} with params: ${JSON.stringify(params)}`);
+
+    const conn = await this.createConnection();
+    try {
+      const stmt = await this.createStatement(conn, sql, params);
+      await new Promise<void>((resolve, reject) => {
+        if (params.length > 0) {
+          // PreparedStatement: use executeUpdate(callback)
+          stmt.executeUpdate((err: any, result?: any) => {
+            if (err) {
+              this.logger.error('Error executing update statement', err);
+              return reject(err);
+            }
+            this.logger.debug('Update statement executed successfully');
+            resolve();
+          });
+        } else {
+          // Statement: use executeUpdate(sql, callback)
+          stmt.executeUpdate(sql, (err: any, result?: any) => {
+            if (err) {
+              this.logger.error('Error executing update statement', err);
+              return reject(err);
+            }
+            this.logger.debug('Update statement executed successfully');
+            resolve();
+          });
+        }
+      });
+    } catch (error) {
+      this.logger.error('Error during update execution', error);
+      throw error;
+    } finally {
+      await this.closeConnection(conn);
+    }
+  }
+
+
 
   private async createStatement(conn: any, sql: string, params: any[]) {
     this.logger.debug(`Creating statement for query: ${sql}`);

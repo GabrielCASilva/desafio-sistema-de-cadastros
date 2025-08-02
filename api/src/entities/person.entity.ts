@@ -10,7 +10,6 @@ export class Pessoa {
   cpf: string;
   telefone?: string;
   celular?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  usuario?: any;
+  created_at?: string | null;
+  updated_at?: string | null;
 }

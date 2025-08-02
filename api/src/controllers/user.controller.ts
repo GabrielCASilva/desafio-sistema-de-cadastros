@@ -1,9 +1,11 @@
 
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UserResponseDto } from '../dtos/user-response.dto';
+
 import { UserService } from '../services/user.service';
+import { UserResponseDto } from 'src/dtos/user/response.dto';
+import { CreateUserDto } from 'src/dtos/user/create.dto';
+import { UpdateUserDto } from 'src/dtos/user/update.dto';
 
 @ApiTags('Usuários')
 @Controller('api/v1/usuarios')
@@ -27,7 +29,8 @@ export class UserController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: Partial<CreateUserDto>): Promise<UserResponseDto> {
+  @ApiBody({ type: UpdateUserDto })
+  async update(@Param('id') id: number, @Body() data: UpdateUserDto): Promise<UserResponseDto> {
     return this.userService.update(id, data);
   }
 

@@ -6,8 +6,10 @@ import { PessoaController } from './controllers/pessoa.controller';
 import { PingV2Controller } from './controllers/ping-v2.controller';
 import { UserService } from './services/user.service';
 import { UserRepository } from './repositories/user.repository';
-import { PessoaService } from './services/pessoa.service';
+import { PessoaService } from './services/person.service';
 import { USER_REPOSITORY } from './repositories/user-repository.interface';
+import { PersonRepository } from './repositories/person.repository';
+import { PERSON_REPOSITORY } from './repositories/person-repository.interface';
 
 @Module({
   imports: [H2Module],
@@ -19,6 +21,11 @@ import { USER_REPOSITORY } from './repositories/user-repository.interface';
     {
       provide: USER_REPOSITORY,
       useClass: UserRepository,
+    },
+    PersonRepository,
+    {
+      provide: PERSON_REPOSITORY,
+      useClass: PersonRepository,
     },
   ],
 })

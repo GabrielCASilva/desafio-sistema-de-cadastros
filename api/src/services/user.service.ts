@@ -1,10 +1,9 @@
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 // import { H2Service } from '../h2/h2.service';
 import { UserMapper } from '../mappers/user.mapper';
-import { User } from '../entities/user.entity';
 import { IUserRepository, USER_REPOSITORY } from '../repositories/user-repository.interface';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UserResponseDto } from '../dtos/user-response.dto';
+import { UserResponseDto } from 'src/dtos/user/response.dto';
+import { CreateUserDto } from 'src/dtos/user/create.dto';
 
 @Injectable()
 export class UserService {
