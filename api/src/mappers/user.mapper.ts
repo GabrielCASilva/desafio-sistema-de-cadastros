@@ -1,4 +1,5 @@
 import { User } from '../entities/user.entity';
+import { UserResponseDto } from '../dtos/user-response.dto';
 
 export class UserMapper {
   static toIsoStringOrNull(val: any): string | null {
@@ -25,6 +26,18 @@ export class UserMapper {
       last_login_at: UserMapper.toIsoStringOrNull(db.LAST_LOGIN_AT),
       created_at: UserMapper.toIsoStringOrNull(db.CREATED_AT),
       updated_at: UserMapper.toIsoStringOrNull(db.UPDATED_AT),
+    };
+  }
+
+  static toResponseDto(user: User): UserResponseDto {
+    return {
+      id: user.id,
+      pessoa_id: user.pessoa_id,
+      login: user.login,
+      ativo: user.ativo,
+      last_login_at: user.last_login_at,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     };
   }
 }

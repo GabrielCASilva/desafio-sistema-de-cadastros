@@ -3,6 +3,8 @@ import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { UserMapper } from '../mappers/user.mapper';
 import { User } from '../entities/user.entity';
 import { IUserRepository, USER_REPOSITORY } from '../repositories/user-repository.interface';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { UserResponseDto } from '../dtos/user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -11,26 +13,26 @@ export class UserService {
     private readonly userRepository: IUserRepository,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserResponseDto[]> {
     const users = await this.userRepository.findAll();
-    return users.map(UserMapper.fromDb);
+    return users.map(UserMapper.fromDb).map(UserMapper.toResponseDto);
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<UserResponseDto> {
     const dbUser = await this.userRepository.findById(id);
     if (!dbUser) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
-    return UserMapper.fromDb(dbUser);
+    return UserMapper.toResponseDto(UserMapper.fromDb(dbUser));
   }
 
-  async create(data: any) {
+  async create(data: CreateUserDto): Promise<UserResponseDto | null> {
     await this.userRepository.insert(data);
     const last = await this.userRepository.findLastInserted();
-    return last ? UserMapper.fromDb(last) : null;
+    return last ? UserMapper.toResponseDto(UserMapper.fromDb(last)) : null;
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: Partial<CreateUserDto>): Promise<UserResponseDto> {
     await this.userRepository.update(id, data);
     return this.findOne(id);
   }
