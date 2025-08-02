@@ -8,9 +8,10 @@ import {
   PersonNotFoundException,
 } from 'src/common/exceptions/person.exception';
 import { H2Service } from 'src/h2/h2.service';
+import { PersonCreateV2Dto } from 'src/dtos/person/create-v2.dto';
 
 @Injectable()
-export class PessoaService {
+export class PersonService {
   constructor(
     @Inject(PERSON_REPOSITORY)
     private readonly personRepository: IPersonRepository,
@@ -29,14 +30,21 @@ export class PessoaService {
     return PersonMapper.toResponseDto(PersonMapper.fromDb(pessoa));
   }
 
-  async create(data: PersonCreateDto): Promise<PersonResponseDto> {
+  async createV1(data: PersonCreateDto): Promise<PersonResponseDto> {
+    return await this.create(data);
+  }
+
+  async createV2(data: PersonCreateV2Dto): Promise<PersonResponseDto> {
+    return await this.create(data);
+  }
+
+  private async create(data: PersonCreateDto | PersonCreateV2Dto): Promise<PersonResponseDto> {
     try {
       await this.personRepository.insert(data);
       const last = await this.personRepository.findLastPerson();
       return last ? PersonMapper.toResponseDto(PersonMapper.fromDb(last)) : null;
     } catch (error: any) {
-      // H2 lança erro 23505 para violação de unique constraint
-      if (error && error.message && error.message.includes(H2Service.H2_UNIQUE_CONSTRAIN)) {
+      if (error?.message?.includes(H2Service.H2_UNIQUE_CONSTRAIN)) {
         throw new PersonFieldDuplicateException();
       }
       throw error;
@@ -49,9 +57,8 @@ export class PessoaService {
     return person;
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.personRepository.remove(id);
-    return { deleted: true };
   }
 }

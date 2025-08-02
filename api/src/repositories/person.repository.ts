@@ -1,22 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { H2Service } from '../h2/h2.service';
 import { IPersonRepository } from './person-repository.interface';
-import { Pessoa } from '../entities/person.entity';
+import { Person } from '../entities/person.entity';
 
 @Injectable()
 export class PersonRepository implements IPersonRepository {
+  private readonly TABLE_NAME = 'pessoas';
+
   constructor(private readonly h2Service: H2Service) {}
 
-  async findAll(): Promise<Pessoa[]> {
+  async findAll(): Promise<Person[]> {
     const result = await this.h2Service.query(
-      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM pessoas`,
+      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM ${this.TABLE_NAME}`,
     );
     return result;
   }
 
-  async findById(id: number): Promise<Pessoa | null> {
+  async findById(id: number): Promise<Person | null> {
     const result = await this.h2Service.query(
-      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM pessoas WHERE id = ?
+      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, telefone, celular, created_at, updated_at FROM ${this.TABLE_NAME} WHERE id = ?
             `,
       [id],
     );
@@ -29,7 +31,7 @@ export class PersonRepository implements IPersonRepository {
     const values = Object.values(data);
     const fields = keys.map((k) => k).join(', ');
     const params = keys.map(() => '?').join(', ');
-    const sql = `INSERT INTO pessoas (${fields}) VALUES (${params})`;
+    const sql = `INSERT INTO ${this.TABLE_NAME} (${fields}) VALUES (${params})`;
     await this.h2Service.execute(sql, values);
   }
 
@@ -37,15 +39,15 @@ export class PersonRepository implements IPersonRepository {
     const keys = Object.keys(data);
     const values = Object.values(data);
     const setClause = keys.map((k) => `${k} = ?`).join(', ');
-    const sql = `UPDATE pessoas SET ${setClause} WHERE id = ?`;
+    const sql = `UPDATE ${this.TABLE_NAME} SET ${setClause} WHERE id = ?`;
     await this.h2Service.execute(sql, [...values, id]);
   }
 
   async remove(id: number): Promise<void> {
-    await this.h2Service.execute('DELETE FROM pessoas WHERE id = ?', [id]);
+    await this.h2Service.execute(`DELETE FROM ${this.TABLE_NAME} WHERE id = ?`, [id]);
   }
 
-  async findLastPerson(): Promise<Pessoa | null> {
+  async findLastPerson(): Promise<Person | null> {
     const result = await this.h2Service.query(
       `SELECT 
         id, 
@@ -61,7 +63,7 @@ export class PersonRepository implements IPersonRepository {
         celular, 
         created_at, 
         updated_at 
-            FROM pessoas 
+            FROM ${this.TABLE_NAME} 
         ORDER BY id 
         DESC LIMIT 1`,
     );

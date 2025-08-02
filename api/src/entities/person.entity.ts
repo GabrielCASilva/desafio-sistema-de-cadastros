@@ -1,4 +1,4 @@
-export class Pessoa {
+export class Person {
   endereco?: string;
   id: number;
   nome: string;

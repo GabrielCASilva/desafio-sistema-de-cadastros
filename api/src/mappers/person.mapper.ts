@@ -1,5 +1,5 @@
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
-import { Pessoa } from '../entities/person.entity';
+import { Person } from '../entities/person.entity';
 
 export class PersonMapper {
   static toIsoStringOrNull(val: any): string | null {
@@ -17,15 +17,16 @@ export class PersonMapper {
     return val;
   }
 
-  static fromDb(db: any): Pessoa {
+  static fromDb(db: any): Person {
     return {
       id: db.ID,
       nome: db.NOME,
       sexo: db.SEXO,
       email: db.EMAIL,
-      data_nascimento: db.DATA_NASCIMENTO,
+      data_nascimento: PersonMapper.toIsoStringOrNull(db.DATA_NASCIMENTO),
       naturalidade: db.NATURALIDADE,
       nacionalidade: db.NACIONALIDADE,
+      endereco: db.ENDERECO,
       cpf: db.CPF,
       telefone: db.TELEFONE,
       celular: db.CELULAR,
@@ -34,7 +35,7 @@ export class PersonMapper {
     };
   }
 
-  static toResponseDto(person: Pessoa): PersonResponseDto {
+  static toResponseDto(person: Person): PersonResponseDto {
     return {
       id: person.id,
       nome: person.nome,
@@ -43,6 +44,7 @@ export class PersonMapper {
       data_nascimento: person.data_nascimento,
       naturalidade: person.naturalidade,
       nacionalidade: person.nacionalidade,
+      endereco: person.endereco,
       cpf: person.cpf,
       telefone: person.telefone,
       celular: person.celular,
