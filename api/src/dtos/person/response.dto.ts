@@ -28,9 +28,6 @@ export class PersonResponseDto {
   @ApiProperty({ example: '123.456.789-00' })
   cpf: string;
 
-  @ApiProperty({ example: '(11) 1234-5678', required: false })
-  telefone?: string;
-
   @ApiProperty({ example: '(11) 91234-5678', required: false })
   celular?: string;
 

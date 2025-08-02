@@ -8,7 +8,6 @@ export class Person {
   naturalidade?: string;
   nacionalidade?: string;
   cpf: string;
-  telefone?: string;
   celular?: string;
   created_at?: string | null;
   updated_at?: string | null;

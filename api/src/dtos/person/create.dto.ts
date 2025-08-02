@@ -61,11 +61,6 @@ export class PersonCreateDto {
   @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: 'O CPF deve estar no formato 000.000.000-00' })
   cpf: string;
 
-  @ApiProperty({ example: '1133334444', required: false })
-  @IsString()
-  @IsOptional()
-  telefone?: string;
-
   @ApiProperty({ example: '1199998888', required: false })
   @IsString()
   @IsOptional()
