@@ -79,4 +79,12 @@ export class UserService {
     await this.findOne(id);
     await this.userRepository.remove(id);
   }
+
+  async findByLogin(login: string): Promise<any | null> {
+    const userDb = await this.userRepository.findByLogin(login);
+    if (!userDb) {
+      return null;
+    }
+    return UserMapper.fromDb(userDb);
+  }
 }

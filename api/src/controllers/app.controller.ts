@@ -1,9 +1,11 @@
 import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController } from '@nestjs/swagger';
+import { Public } from 'src/common/decorators/public.decorator';
 
-@ApiTags('Rota de boas-vindas')
+@ApiExcludeController()
 @Controller({ path: '', version: VERSION_NEUTRAL })
 export class AppController {
+  @Public()
   @Get()
   getHello(): string {
     return 'Bem-vindo à API!';

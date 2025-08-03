@@ -13,6 +13,10 @@ export class AppExceptionFilter implements ExceptionFilter {
     let message = 'Um erro inesperado aconteceu';
     let code = undefined;
 
+    // Log detalhado do erro
+    // eslint-disable-next-line no-console
+    console.error('Erro capturado pelo AppExceptionFilter:', exception);
+
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse() as any;

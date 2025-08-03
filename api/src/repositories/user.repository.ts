@@ -39,6 +39,14 @@ export class UserRepository implements IUserRepository, IRepository<User> {
     return result[0] || null;
   }
 
+  async findByLogin(login: string): Promise<User | null> {
+    const result = await this.h2Service.query(
+      `SELECT id, pessoa_id, login, senha, ativo, last_login_at, created_at, updated_at FROM ${this.TABLE_NAME} WHERE login = ?`,
+      [login],
+    );
+    return result[0] || null;
+  }
+
   async update(id: number, data: Partial<User>): Promise<void> {
     const keys = Object.keys(data);
     const values = Object.values(data);

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Version } from '@nestjs/common';
-import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { PersonService } from '../services/person.service';
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
 import { PersonCreateDto } from 'src/dtos/person/create.dto';
@@ -7,6 +7,7 @@ import { PersonCreateV2Dto } from 'src/dtos/person/create-v2.dto';
 import { PersonUpdateDto } from 'src/dtos/person/update.dto';
 
 @ApiTags('Persons')
+@ApiBearerAuth('bearer')
 @Controller('persons')
 export class PersonController {
   constructor(private readonly pessoaService: PersonService) {}

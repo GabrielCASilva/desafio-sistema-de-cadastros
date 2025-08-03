@@ -21,15 +21,8 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
-  // Swagger config único
-  const config = new DocumentBuilder()
-    .setTitle('Desafio Controle de Cadastros API')
-    .setDescription('Documentação da API com múltiplas versões')
-    .setVersion('1.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/doc', app, document);
+  // Swagger com JWT Bearer
+  AppModule.setupSwagger(app);
 
   await app.listen(3000);
 }

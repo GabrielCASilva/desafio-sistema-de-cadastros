@@ -22,6 +22,7 @@ export class UserMapper {
       id: db.ID,
       pessoa_id: db.PESSOA_ID,
       login: db.LOGIN,
+      senha: db.SENHA,
       ativo: db.ATIVO,
       last_login_at: UserMapper.toIsoStringOrNull(db.LAST_LOGIN_AT),
       created_at: UserMapper.toIsoStringOrNull(db.CREATED_AT),
@@ -52,7 +53,4 @@ export class UserMapper {
       updated_at: user.updated_at,
     };
   }
-
-  // ...existing code...
-  // ...existing code...
 }

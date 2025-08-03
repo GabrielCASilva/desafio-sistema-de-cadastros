@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsPastDateConstraint } from 'src/common/validators/is-past-date.validator';
-import { SEXO_ENUM } from 'src/entities/user.entity';
+import { SEXO_ENUM } from 'src/entities/person.entity';
 
 export class PersonCreateV2Dto {
   @ApiProperty({ example: 'Ana Silva' })

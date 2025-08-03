@@ -9,5 +9,3 @@ export class User {
   updated_at?: string | null;
   pessoa?: any;
 }
-
-export const SEXO_ENUM = ['MASCULINO', 'FEMININO', 'OUTRO'] as const;

@@ -1,13 +1,15 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { UserService } from '../services/user.service';
 import { UserResponseDto } from 'src/dtos/user/response.dto';
 import { UserCreateDto } from 'src/dtos/user/create.dto';
 import { UserUpdateDto } from 'src/dtos/user/update.dto';
 
-@ApiTags('Usuários')
-@Controller('usuarios')
+@ApiTags('Users')
+@ApiBearerAuth('bearer')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

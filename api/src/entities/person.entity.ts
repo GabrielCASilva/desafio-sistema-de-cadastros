@@ -1,3 +1,4 @@
+export const SEXO_ENUM = ['MASCULINO', 'FEMININO', 'OUTRO'] as const;
 export class Person {
   endereco?: string;
   id: number;

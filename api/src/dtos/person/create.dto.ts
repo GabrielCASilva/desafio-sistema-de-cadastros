@@ -12,7 +12,7 @@ import {
 
 import { IsPastDateConstraint } from 'src/common/validators/is-past-date.validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { SEXO_ENUM } from 'src/entities/user.entity';
+import { SEXO_ENUM } from 'src/entities/person.entity';
 
 export class PersonCreateDto {
   @ApiProperty({ example: 'Ana Silva' })
