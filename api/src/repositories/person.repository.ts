@@ -10,19 +10,18 @@ export class PersonRepository implements IPersonRepository {
   constructor(private readonly h2Service: H2Service) {}
 
   async findAll(): Promise<Person[]> {
-    console.log('[PersonRepository] findAll query:', `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular, created_at, updated_at FROM ${this.TABLE_NAME}`);
     const result = await this.h2Service.query(
       `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular, created_at, updated_at FROM ${this.TABLE_NAME}`,
     );
-    console.log('[PersonRepository] findAll result:', result);
     return result;
   }
 
   async findById(id: number): Promise<Person | null> {
-    const query = `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular, created_at, updated_at FROM ${this.TABLE_NAME} WHERE id = ?`;
-    console.log('[PersonRepository] findById query:', query, 'params:', [id]);
-    const result = await this.h2Service.query(query, [id]);
-    console.log('[PersonRepository] findById result:', result);
+    const result = await this.h2Service.query(
+      `SELECT id, nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular, created_at, updated_at FROM ${this.TABLE_NAME} WHERE id = ?
+            `,
+      [id],
+    );
     if (!result || result.length === 0) return null;
     return result[0];
   }
