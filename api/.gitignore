@@ -3,6 +3,8 @@ dist
 node_modules
 build
 database
+compiled_tests_dir
+coverage
 
 # Logs
 logs

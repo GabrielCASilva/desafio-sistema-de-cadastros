@@ -12,10 +12,14 @@ export class AppException extends HttpException {
     super(
       {
         status,
-        message: `${code} - ${message}`,
+        message: `${ErrorCodes[code]} - ${message}`,
       },
       status,
     );
     this.code = code;
+  }
+
+  public getStatusCode(): number {
+    return this.getStatus ? this.getStatus() : (this as any).status;
   }
 }

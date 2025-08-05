@@ -45,7 +45,10 @@ VALUES ('database_version', '1.0.0');
 
 -- Inserção de dados de exemplo para pessoas (só insere se não existir o e-mail)
 INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular)
-SELECT 'Ana Silva', 'FEMININO', 'ana.silva@email.com', '1990-01-15', 'São Paulo', 'Brasileira', 'Rua das Flores, 123', '123.456.789-00', '1199998888'
+SELECT 'Admin', 'MASCULINO', 'admin@email.com', '1980-01-01', 'São Paulo', 'Brasileira', 'Rua do Admin, 1', '000.000.000-00', '11999999999'
+WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'admin@email.com');
+INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular)
+SELECT 'Ana Silva', 'FEMININO', 'ana.silva@email.com', '1990-02-15', 'Campinas', 'Brasileira', 'Rua das Flores, 123', '123.456.789-00', '11988887777'
 WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'ana.silva@email.com');
 INSERT INTO pessoas (nome, sexo, email, data_nascimento, naturalidade, nacionalidade, endereco, cpf, celular)
 SELECT 'Bruno Souza', 'MASCULINO', 'bruno.souza@email.com', '1985-05-20', 'Rio de Janeiro', 'Brasileira', NULL, '234.567.890-11', '2198887777'
@@ -78,13 +81,15 @@ WHERE NOT EXISTS (SELECT 1 FROM pessoas WHERE email = 'joao.pedro@email.com');
 
 -- Inserção de dados de exemplo para usuários (só insere se não existir o login)
 INSERT INTO usuarios (pessoa_id, login, senha)
-SELECT 1, 'ana.silva', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'ana.silva');
+SELECT 1, 'admin', 'admin123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'admin');
 INSERT INTO usuarios (pessoa_id, login, senha)
-SELECT 2, 'bruno.souza', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'bruno.souza');
+SELECT 2, 'ana.silva', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'ana.silva');
 INSERT INTO usuarios (pessoa_id, login, senha)
-SELECT 3, 'carla.dias', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'carla.dias');
+SELECT 3, 'bruno.souza', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'bruno.souza');
 INSERT INTO usuarios (pessoa_id, login, senha)
-SELECT 4, 'diego.lima', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'diego.lima');
+SELECT 4, 'carla.dias', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'carla.dias');
 INSERT INTO usuarios (pessoa_id, login, senha)
-SELECT 5, 'eduarda.pires', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'eduarda.pires');
+SELECT 5, 'diego.lima', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'diego.lima');
+INSERT INTO usuarios (pessoa_id, login, senha)
+SELECT 6, 'eduarda.pires', 'senha123' WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE login = 'eduarda.pires');
 

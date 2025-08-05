@@ -57,7 +57,6 @@ export default function PersonForm({ initialData = {}, onSubmit, id }) {
     );
   }
 
-  // Handler para atualizar o campo celular formatando
   const handleCelularChange = (e) => {
     const formatted = formatCelular(e.target.value);
     form.setFieldsValue({ celular: formatted });
