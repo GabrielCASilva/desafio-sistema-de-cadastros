@@ -41,7 +41,8 @@ export class H2Service implements OnModuleInit {
       this.configureJavaEnvironment();
       await this.setupH2Driver();
 
-      await this.initializeDatabase();
+      // Comentado para o seed do banco não ficar sendo feito toda vez que inicia
+      // await this.initializeDatabase();
 
       this.isReady = true;
       this.logger.log('H2 Service initialized successfully');

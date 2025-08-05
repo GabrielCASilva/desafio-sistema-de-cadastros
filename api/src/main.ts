@@ -10,11 +10,12 @@ async function bootstrap() {
   java.options.push('--add-opens=java.base/java.lang=ALL-UNNAMED');
 
   const app = await NestFactory.create(AppModule);
-  // Habilita CORS para o front-end
+
   app.enableCors({
-    origin: 'http://localhost:5173', // ajuste se seu front rodar em outra porta
+    origin: 'http://localhost:5173',
     credentials: true,
   });
+
   const { AppExceptionFilter } = await import('./common/filters/app-exception.filter');
   app.useGlobalFilters(new AppExceptionFilter());
 

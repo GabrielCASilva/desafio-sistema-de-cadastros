@@ -13,7 +13,6 @@ export class AuthService {
   async validateUser(login: string, senha: string) {
     const user = await this.userService.findByLogin(login);
     if (user && user.senha === senha) {
-      // Remover senha do retorno
       const { senha, ...result } = user;
       return result;
     }

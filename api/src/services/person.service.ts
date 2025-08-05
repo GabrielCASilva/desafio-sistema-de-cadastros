@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PersonMapper } from '../mappers/person.mapper';
 import { IPersonRepository, PERSON_REPOSITORY } from '../repositories/person-repository.interface';
 import { PersonResponseDto } from 'src/dtos/person/response.dto';
@@ -23,10 +23,7 @@ export class PersonService {
   }
 
   async findOne(id: number): Promise<PersonResponseDto> {
-    const pessoa = await this.personRepository.findById(id);
-    if (!pessoa) {
-      throw new PersonNotFoundException();
-    }
+    const pessoa = await this._findPerson(id);
     return PersonMapper.toResponseDto(PersonMapper.fromDb(pessoa));
   }
 
@@ -45,20 +42,28 @@ export class PersonService {
       return last ? PersonMapper.toResponseDto(PersonMapper.fromDb(last)) : null;
     } catch (error: any) {
       if (error?.message?.includes(H2Service.H2_UNIQUE_CONSTRAIN)) {
-        throw new PersonFieldDuplicateException();
+        throw new PersonFieldDuplicateException(HttpStatus.CONFLICT);
       }
       throw error;
     }
   }
 
   async update(id: number, data: Partial<PersonCreateDto>): Promise<PersonResponseDto> {
-    const person = await this.findOne(id);
+    await this._findPerson(id);
     await this.personRepository.update(id, data);
-    return person;
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.personRepository.remove(id);
+  }
+
+  async _findPerson(id: number): Promise<PersonResponseDto> {
+    const person = await this.personRepository.findById(id);
+    if (!person) {
+      throw new PersonNotFoundException();
+    }
+    return person;
   }
 }

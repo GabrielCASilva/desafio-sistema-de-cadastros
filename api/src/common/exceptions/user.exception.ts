@@ -37,3 +37,12 @@ export class UserFieldDuplicateException extends AppException {
     super('Falha ao cadastrar novo usuário no banco.', status, code);
   }
 }
+
+export class UserUpdateException extends AppException {
+  constructor(
+    status: HttpStatus = HttpStatus.BAD_REQUEST,
+    code: ErrorCodes = ErrorCodes.ATUALIZACAO_NAO_PODE_SER_REALIZADA,
+  ) {
+    super('Falha ao atualizar um usuário no banco.', status, code);
+  }
+}

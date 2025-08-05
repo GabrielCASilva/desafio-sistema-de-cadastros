@@ -55,8 +55,8 @@ export class AppModule implements NestModule {
       .setDescription('Documentação da API')
       .setVersion('1.0')
       .addTag('Auth')
-      .addTag('Users')
       .addTag('Persons')
+      .addTag('Users')
       .addBearerAuth(
         {
           type: 'apiKey',

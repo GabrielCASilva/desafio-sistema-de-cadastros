@@ -16,7 +16,6 @@ Este projeto é um sistema completo de cadastro de pessoas e usuários, desenvol
 desafio-sistema-de-cadastros/
 |-- api/      # Backend NestJS
 |-- front/    # Frontend React + Vite
-
 ```
 
 ## Como rodar o projeto
@@ -27,6 +26,32 @@ desafio-sistema-de-cadastros/
 - Node.js 18+
 - npm
 - java 21
+
+### Banco H2
+
+1. Acesse a pasta do backend:
+
+   ```bash
+   cd api
+   ```
+
+2. Habilitando a versão correta do node:
+
+   ```bash
+   nvm use
+   ```
+
+3. Inicie o banco:
+
+   ```bash
+   npm run start:h2
+   ```
+
+4. Alimente o banco:
+
+   ```bash
+   npm run seed:h2
+   ```
 
 ### Backend (API)
 
@@ -45,22 +70,22 @@ desafio-sistema-de-cadastros/
 3. Instale as dependências:
 
    ```bash
+   npm install
+   ```
+
+   3.1. Se não rodar use:
+
+   ```bash
    npm install --legacy-peer-deps
    ```
 
-4. Inicie o banco h2:
-
-   ```bash
-   npm run start:h2
-   ```
-
-5. Rode a aplicação:
+4. Rode a aplicação:
 
    ```bash
    npm run start:dev
    ```
 
-6. Acesse a documentação Swagger em: [http://localhost:3000/doc](http://localhost:3000/doc)
+5. Acesse a documentação Swagger em: [http://localhost:3000/doc](http://localhost:3000/doc)
 
 #### Testes Backend
 
@@ -104,7 +129,7 @@ desafio-sistema-de-cadastros/
 
 ## Banco de Dados
 
-O projeto utiliza H2 Database (arquivo local). O schema é criado e alimentado automaticamente ao rodar a API.
+O projeto utiliza H2 Database (arquivo local).
 
 ## Estrutura das Pastas Importantes
 

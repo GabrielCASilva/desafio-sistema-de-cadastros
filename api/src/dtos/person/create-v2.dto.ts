@@ -28,7 +28,7 @@ export class PersonCreateV2Dto {
   sexo?: string;
 
   @ApiProperty({ example: 'ana@email.com', required: false })
-  @IsEmail()
+  @IsEmail({}, { message: 'O campo email deve ser um endereço de e-mail válido' })
   @IsOptional()
   email?: string;
 
@@ -49,18 +49,20 @@ export class PersonCreateV2Dto {
   nacionalidade?: string;
 
   @ApiProperty({ example: 'Rua das Flores, 123', required: false })
-  @IsString()
-  @IsNotEmpty()
-  endereco?: string;
+  @IsString({ message: 'O endereço deve ser uma string' })
+  @IsNotEmpty({ message: 'O endereço é obrigatório' })
+  endereco: string;
 
   @ApiProperty({ example: '123.456.789-00' })
   @IsString()
   @Length(11, 14)
   @IsNotEmpty()
-  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: 'O CPF deve estar no formato 000.000.000-00' })
+  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+    message: 'O CPF deve ser válido e estar no formato 000.000.000-00',
+  })
   cpf: string;
 
-  @ApiProperty({ example: '1199998888', required: false })
+  @ApiProperty({ example: '+55 11 99999-8888', required: false })
   @IsString()
   @IsOptional()
   celular?: string;

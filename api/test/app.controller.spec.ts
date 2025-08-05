@@ -10,7 +10,7 @@ export default class AppControllerTests extends TestSuite {
   }
 
   @Test()
-  async shouldReturnHelloWorld() {
+  async shouldReturnBemVindo() {
     const result = this.controller.getHello();
     this.assert.equal('Bem-vindo à API!', result);
   }

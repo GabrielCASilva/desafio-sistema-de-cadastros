@@ -29,7 +29,7 @@ export class PersonCreateDto {
   sexo?: string;
 
   @ApiProperty({ example: 'ana@email.com', required: false })
-  @IsEmail()
+  @IsEmail({}, { message: 'O campo email deve ser um endereço de e-mail válido' })
   @IsOptional()
   email?: string;
 
@@ -58,10 +58,12 @@ export class PersonCreateDto {
   @IsString()
   @Length(11, 14)
   @IsNotEmpty()
-  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, { message: 'O CPF deve estar no formato 000.000.000-00' })
+  @Matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, {
+    message: 'O CPF deve ser válido e estar no formato 000.000.000-00',
+  })
   cpf: string;
 
-  @ApiProperty({ example: '1199998888', required: false })
+  @ApiProperty({ example: '+55 11 99999-8888', required: false })
   @IsString()
   @IsOptional()
   celular?: string;

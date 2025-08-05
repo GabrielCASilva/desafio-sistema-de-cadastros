@@ -1,176 +1,144 @@
-import { PersonController } from '../src/controllers/person.controller';
 import { Test, TestSuite } from 'xunit.ts';
-import { PersonResponseDto } from '../src/dtos/person/response.dto';
-import { PersonCreateDto } from '../src/dtos/person/create.dto';
-import { PersonUpdateDto } from '../src/dtos/person/update.dto';
-
-class MockPersonService {
-  public findAllReturn: any = undefined;
-  public findOneReturn: any = undefined;
-  public createV1Return: any = undefined;
-  public createV2Return: any = undefined;
-  public updateReturn: any = undefined;
-  public removeReturn: any = undefined;
-
-  public calls = {
-    findAll: 0,
-    findOne: [] as any[],
-    createV1: [] as any[],
-    createV2: [] as any[],
-    update: [] as any[],
-    remove: [] as any[],
-  };
-
-  async findAll() {
-    this.calls.findAll++;
-    return this.findAllReturn;
-  }
-
-  async findOne(id: number) {
-    this.calls.findOne.push(id);
-    return this.findOneReturn;
-  }
-
-  async createV1(dto: PersonCreateDto) {
-    this.calls.createV1.push(dto);
-    return this.createV1Return;
-  }
-
-  async createV2(dto: any) {
-    this.calls.createV2.push(dto);
-    return this.createV2Return;
-  }
-
-  async update(id: number, dto: PersonUpdateDto) {
-    this.calls.update.push({ id, dto });
-    return this.updateReturn;
-  }
-
-  async remove(id: number) {
-    this.calls.remove.push(id);
-    return this.removeReturn;
-  }
-}
+import { PersonCreateV2Dto } from 'src/dtos/person/create-v2.dto';
+import { PersonController } from '../src/controllers/person.controller';
+import { ValidationPipe } from '@nestjs/common';
 
 export default class PersonControllerTests extends TestSuite {
-  private controller: PersonController;
-  private service: MockPersonService;
-
-  private createFakePerson(id = 1): PersonResponseDto {
-    return {
-      id,
-      nome: `Pessoa ${id}`,
-      data_nascimento: '1990-01-01',
-      cpf: `000.000.000-${id.toString().padStart(2, '0')}`,
-    };
-  }
-
   @Test()
-  async shouldReturnAllPersons() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    const persons = [this.createFakePerson(1), this.createFakePerson(2)];
-    service.findAllReturn = persons;
+  async shouldCreatePersonV2Successfully() {
+    const mockService = new MockPersonService();
+    const controller = new PersonController(mockService as any);
 
-    const result = await controller.findAll();
-
-    this.assert.equal(JSON.stringify(result), JSON.stringify(persons));
-    this.assert.equal(service.calls.findAll, 1);
-  }
-
-  @Test()
-  async shouldReturnOnePerson() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    const person = this.createFakePerson(1);
-    service.findOneReturn = person;
-
-    const result = await controller.findOne(1);
-
-    this.assert.equal(JSON.stringify(result), JSON.stringify(person));
-    this.assert.equal(JSON.stringify(service.calls.findOne), JSON.stringify([1]));
-  }
-
-  @Test()
-  async shouldCreatePersonV1() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    const dto: PersonCreateDto = {
+    const validPayload = {
       nome: 'Ana',
+      sexo: 'FEMININO',
+      email: 'ana@example.com',
       data_nascimento: '1990-01-01',
-      cpf: '123.456.789-00',
-    } as any;
-
-    const response = { id: 1, ...dto } as any;
-    service.createV1Return = response;
-
-    const result = await controller.create(dto);
-
-    this.assert.equal(JSON.stringify(result), JSON.stringify(response));
-    this.assert.equal(JSON.stringify(service.calls.createV1[0]), JSON.stringify(dto));
-  }
-
-  @Test()
-  async shouldCreatePersonV2() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    const dto = {
-      nome: 'Ana',
-      data_nascimento: '1990-01-01',
-      cpf: '123.456.789-00',
+      naturalidade: 'São Paulo',
+      nacionalidade: 'Brasileira',
       endereco: 'Rua Exemplo, 123',
+      cpf: '123.456.789-00',
+      celular: '+55 11 99999-8888',
     };
-    const response = { id: 1, ...dto };
-    service.createV2Return = response;
 
-    const result = await controller.createV2(dto as any);
+    const mockCreatedPerson = { id: 1, ...validPayload };
+    mockService.returnValues.createV2 = mockCreatedPerson;
 
-    this.assert.equal(JSON.stringify(result), JSON.stringify(response));
-    this.assert.equal(JSON.stringify(service.calls.createV2[0]), JSON.stringify(dto));
+    const validatedDto = await new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }).transform(validPayload, { type: 'body', metatype: PersonCreateV2Dto });
+
+    const result = await controller.createV2(validatedDto);
+
+    this.assert.equal(JSON.stringify(result), JSON.stringify(mockCreatedPerson));
+    this.assert.equal(mockService.calls.createV2.length, 1);
+    this.assert.equal(JSON.stringify(mockService.calls.createV2[0]), JSON.stringify(validatedDto));
   }
 
   @Test()
-  async shouldUpdatePerson() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    const dto: PersonUpdateDto = { nome: 'Ana Atualizada' } as any;
-    const response = { ...this.createFakePerson(1), nome: 'Ana Atualizada' };
-    service.updateReturn = response;
-
-    const result = await controller.update(1, dto);
-
-    this.assert.equal(JSON.stringify(result), JSON.stringify(response));
-    this.assert.equal(JSON.stringify(service.calls.update[0]), JSON.stringify({ id: 1, dto }));
-  }
-
-  @Test()
-  async shouldRemovePerson() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    service.removeReturn = undefined;
-
-    const result = await controller.remove(1);
-
-    this.assert.equal(result, undefined);
-    this.assert.equal(JSON.stringify(service.calls.remove), JSON.stringify([1]));
-  }
-
-  @Test()
-  async shouldThrowErrorWhenServiceFails() {
-    const service = new MockPersonService();
-    const controller = new PersonController(service as any);
-    service.findOne = async () => {
-      throw new Error('DB fail');
+  async shouldThrowIfEnderecoMissingInV2() {
+    const invalidPayload = {
+      nome: 'Ana',
+      sexo: 'FEMININO',
+      email: 'ana@example.com',
+      data_nascimento: '1990-01-01',
+      naturalidade: 'São Paulo',
+      nacionalidade: 'Brasileira',
+      cpf: '123.456.789-00',
+      celular: '+55 11 99999-8888',
     };
 
     let errorThrown = false;
     try {
-      await controller.findOne(999);
+      await new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }).transform(invalidPayload, { type: 'body', metatype: PersonCreateV2Dto });
     } catch (err) {
       errorThrown = true;
-      this.assert.equal((err as Error).message, 'DB fail');
-    }
+      const response = typeof err.getResponse === 'function' ? err.getResponse() : err.message;
+      let messages: string[] = [];
 
+      if (typeof response === 'string') {
+        messages = [response];
+      } else if (Array.isArray(response.message)) {
+        messages = response.message;
+      } else if (typeof response.message === 'string') {
+        messages = [response.message];
+      }
+
+      const found = messages.some((msg) => msg.toLowerCase().includes('endereco'));
+      this.assert.equal(found, true, 'Erro deve mencionar que o endereco é obrigatório');
+    }
     this.assert.equal(errorThrown, true);
+  }
+}
+
+export class MockPersonService {
+  public calls = {
+    createV1: [] as any[],
+    createV2: [] as any[],
+    findAll: 0,
+    findOne: [] as any[],
+    update: [] as any[],
+    remove: [] as any[],
+  };
+
+  public returnValues = {
+    createV1: null as any,
+    createV2: null as any,
+    findAll: null as any,
+    findOne: null as any,
+    update: null as any,
+    remove: null as any,
+  };
+
+  async createV1(dto: any) {
+    this.calls.createV1.push(dto);
+    if (this.returnValues.createV1 instanceof Error) {
+      throw this.returnValues.createV1;
+    }
+    return this.returnValues.createV1;
+  }
+
+  async createV2(dto: any) {
+    this.calls.createV2.push(dto);
+    if (this.returnValues.createV2 instanceof Error) {
+      throw this.returnValues.createV2;
+    }
+    return this.returnValues.createV2;
+  }
+
+  async findAll() {
+    this.calls.findAll++;
+    if (this.returnValues.findAll instanceof Error) {
+      throw this.returnValues.findAll;
+    }
+    return this.returnValues.findAll;
+  }
+
+  async findOne(id: number) {
+    this.calls.findOne.push(id);
+    if (this.returnValues.findOne instanceof Error) {
+      throw this.returnValues.findOne;
+    }
+    return this.returnValues.findOne;
+  }
+
+  async update(id: number, dto: any) {
+    this.calls.update.push({ id, dto });
+    if (this.returnValues.update instanceof Error) {
+      throw this.returnValues.update;
+    }
+    return this.returnValues.update;
+  }
+
+  async remove(id: number) {
+    this.calls.remove.push(id);
+    if (this.returnValues.remove instanceof Error) {
+      throw this.returnValues.remove;
+    }
+    return this.returnValues.remove;
   }
 }

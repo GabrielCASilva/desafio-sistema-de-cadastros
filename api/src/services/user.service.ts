@@ -6,6 +6,7 @@ import { UserCreateDto } from 'src/dtos/user/create.dto';
 import {
   UserFieldDuplicateException,
   UserNotFoundException,
+  UserUpdateException,
 } from 'src/common/exceptions/user.exception';
 import { H2Service } from 'src/h2/h2.service';
 import { IPersonRepository, PERSON_REPOSITORY } from '../repositories/person-repository.interface';
@@ -39,10 +40,7 @@ export class UserService {
   }
 
   async findOne(id: number, withPerson = false): Promise<any> {
-    const userDb = await this.userRepository.findById(id);
-    if (!userDb) {
-      throw new UserNotFoundException();
-    }
+    const userDb = await this._findUser(id);
     if (!withPerson) {
       const userDto = UserMapper.toResponseDto(UserMapper.fromDb(userDb));
       return userDto;
@@ -70,9 +68,16 @@ export class UserService {
   }
 
   async update(id: number, data: Partial<UserCreateDto>): Promise<UserResponseDto> {
-    const user = await this.findOne(id);
+    if ('pessoa_id' in data) {
+      throw new UserUpdateException();
+    }
+    await this._findUser(id);
     await this.userRepository.update(id, data);
-    return user;
+    const userDb = await this._findUser(id);
+    const user = UserMapper.fromDb(userDb);
+    const personDb = await this._findPerson(user.pessoa_id);
+    const person = PersonMapper.fromDb(personDb);
+    return UserMapper.toResponseDtoWithPerson(user, person);
   }
 
   async remove(id: number): Promise<void> {
@@ -86,5 +91,21 @@ export class UserService {
       return null;
     }
     return UserMapper.fromDb(userDb);
+  }
+
+  async _findUser(id: number): Promise<UserResponseDto> {
+    const userDb = await this.userRepository.findById(id);
+    if (!userDb) {
+      throw new UserNotFoundException();
+    }
+    return userDb;
+  }
+
+  async _findPerson(id: number): Promise<any> {
+    const personDb = await this.personRepository.findById(id);
+    if (!personDb) {
+      throw new UserNotFoundException();
+    }
+    return personDb;
   }
 }
